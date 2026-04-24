@@ -65,9 +65,9 @@ function love.update(dt)
       ball.x = player1.x + OFF_SET_X
 
       if ball.dy < 0 then 
-        ball.dy = -math.random(10, 150)
+        ball.dy = -math.random(300, 400)
       else
-        ball.dy = math.random(10, 150)
+        ball.dy = math.random(300, 400)
       end
     end
 
@@ -76,23 +76,39 @@ function love.update(dt)
       ball.x = player2.x - OFF_SET_X
 
       if ball.dy < 0 then 
-        ball.dy = -math.random(10, 150)
+        ball.dy = -math.random(300, 400)
       else
-        ball.dy = math.random(10, 150)
+        ball.dy = math.random(300, 400)
       end
     end
 
+    -- Collide with top border
     if ball.y <= 0 then 
       ball.y = 0
       ball.dy = -ball.dy
     end
 
+    -- Collide with bottom border
     if ball.y >= WINDOW_HEIGHT - 10 then
       ball.y = WINDOW_HEIGHT - 10
       ball.dy = -ball.dy
     end
 
+    -- Collide with left border
+    if ball.x <= 0 then
+      player2.score = player2.score + 1
+      gameState = "start"
+      ball.x = WINDOW_WIDTH / 2
+      ball.y = WINDOW_HEIGHT / 2
+    end
 
+    -- Collide with right border
+    if ball.x >= WINDOW_WIDTH then
+      player1.score = player1.score + 1
+      gameState = "start"
+      ball.x = WINDOW_WIDTH / 2
+      ball.y = WINDOW_HEIGHT / 2
+    end
 
     ball:update(dt)
   end
