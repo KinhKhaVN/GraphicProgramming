@@ -8,7 +8,7 @@ BOERDER_BOTTOM = WINDOW_HEIGHT
 BORDER_LEFT = 0
 BOERDER_RIGHT = WINDOW_WIDTH
 
-OFF_SET_X= 10
+OFF_SET_X = 10
 
 local push = require "src.push"
 
@@ -19,8 +19,10 @@ function love.load()
   math.randomseed(os.time())
   largeFont = love.graphics.newFont("assets/Font/alk-life-webfont.ttf", 32)
   smallFont = love.graphics.newFont("assets/Font/alk-life-webfont.ttf", 14)
---  local sound = love.audio.newSource("assets/gamePlayMusic.mp3", "stream")
---  love.audio.play(sound)
+  bounceToPlayerSound = love.audio.newSource("assets/Sound/bounceToPlayer.mp3", "stream")
+  bounceToTopBottomBorderSound = love.audio.newSource("assets/Sound/bounceToTopBottomBorder.mp3", "stream")
+  --gamePlayMusic = love.audio.newSource("assets/Sound/gamePlayMusic.mp3", "stream")
+  --love.audio.play(gamePlayMusic)
 
   player1 = Player:init(10, 0, 5, 40)
   player2 = Player:init(WINDOW_WIDTH - 15, WINDOW_HEIGHT - 50, 5, 40)
@@ -61,53 +63,55 @@ function love.update(dt)
 
   if gameState == "play" then
     if ball:collision(player1) then
-      ball.dx = -ball.dx * 1.03
+      ball.dx = -ball.dx * 1.25
       ball.x = player1.x + OFF_SET_X
 
       if ball.dy < 0 then 
-        ball.dy = -math.random(300, 400)
+        ball.dy = -math.random(100, 200)
       else
-        ball.dy = math.random(300, 400)
+        ball.dy = math.random(100, 200)
       end
+      love.audio.play(bounceToPlayerSound)
     end
 
     if ball:collision(player2) then
-      ball.dx = -ball.dx * 1.03
+      ball.dx = -ball.dx * 1.25
       ball.x = player2.x - OFF_SET_X
 
       if ball.dy < 0 then 
-        ball.dy = -math.random(300, 400)
+        ball.dy = -math.random(100, 200)
       else
-        ball.dy = math.random(300, 400)
+        ball.dy = math.random(100, 200)
       end
+      love.audio.play(bounceToPlayerSound)
     end
 
     -- Collide with top border
     if ball.y <= 0 then 
       ball.y = 0
       ball.dy = -ball.dy
+      love.audio.play(bounceToTopBottomBorderSound)
     end
 
     -- Collide with bottom border
     if ball.y >= WINDOW_HEIGHT - 10 then
       ball.y = WINDOW_HEIGHT - 10
       ball.dy = -ball.dy
+      love.audio.play(bounceToTopBottomBorderSound)
     end
 
     -- Collide with left border
     if ball.x <= 0 then
       player2.score = player2.score + 1
       gameState = "start"
-      ball.x = WINDOW_WIDTH / 2
-      ball.y = WINDOW_HEIGHT / 2
+      ball:reset()
     end
 
     -- Collide with right border
     if ball.x >= WINDOW_WIDTH then
       player1.score = player1.score + 1
       gameState = "start"
-      ball.x = WINDOW_WIDTH / 2
-      ball.y = WINDOW_HEIGHT / 2
+      ball:reset()
     end
 
     ball:update(dt)
@@ -142,8 +146,10 @@ function love.keypressed(key)
   if key == 'space' then
     if gameState == "start" then
       gameState = "play"
+--      gamePlayMusic:play()
     elseif gameState == "play" then
       gameState = "start"
+--      gamePlayMusic:pause()
     end
   end
 end
