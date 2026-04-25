@@ -16,10 +16,7 @@ function Player:init(x, y, width, height)
 end
 
 function Player:reset()
-  self.x = WINDOW_WIDTH / 2
-  self.y = WINDOW_HEIGHT / 2
-  self.dx = math.random(2) == 1 and -100 or 100
-  self.dy = math.random(-50, 50)
+  self.score = 0
 end
 
 function Player:update(dt)
