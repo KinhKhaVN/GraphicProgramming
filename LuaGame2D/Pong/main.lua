@@ -10,6 +10,8 @@ BOERDER_RIGHT = WINDOW_WIDTH
 
 OFF_SET_X = 10
 
+THRESHOLD = 2
+
 local push = require "src.push"
 
 require "src.Ball"
@@ -117,6 +119,11 @@ function love.update(dt)
     ball:update(dt)
   end
 
+  if player1.score == THRESHOLD or player2.score == THRESHOLD then
+    gameState = "end"
+  end
+
+
   player1:update(dt)
   player2:update(dt)
 
@@ -136,6 +143,14 @@ function love.draw()
 
   love.graphics.printf(tostring(player1.score), 0, WINDOW_HEIGHT / 2 - 100, WINDOW_WIDTH / 2 + 200, "center")
   love.graphics.printf(tostring(player2.score), 0, WINDOW_HEIGHT / 2 - 100, WINDOW_WIDTH / 2 + 600, "center")
+
+  if gameState == "end" then
+    love.graphics.setColor(0, 1, 0, 1)
+    love.graphics.print("END GAME", WINDOW_WIDTH / 2 - 80, WINDOW_HEIGHT / 2 - 200)
+    love.graphics.setColor(1, 1, 1, 1)
+  elseif gameState == "play" then
+
+  end
 end
 
 function love.keypressed(key)
@@ -150,8 +165,15 @@ function love.keypressed(key)
     elseif gameState == "play" then
       gameState = "start"
 --      gamePlayMusic:pause()
+    elseif gameState == "end" then
+      player1:reset()
+      player2:reset()
+      ball:reset()
+      gameState = "start"
     end
   end
+
+
 end
 
 function displayFPS()
