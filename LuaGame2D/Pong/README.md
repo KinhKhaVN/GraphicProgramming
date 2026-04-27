@@ -1,7 +1,7 @@
 ## Welcome to Pong
 
 ![Pong](./assets/Sceenshoot/Pong.png)
-*Pong game*
+
 
 > [!NOTE] 
 > The game is wrote in Lua, using framework LOVE2d
