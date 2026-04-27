@@ -1,21 +1,13 @@
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 600
+--WINDOW_WIDTH = 800
+--WINDOW_HEIGHT = 600
 
-PADDLE_SPEED = 400
-
-BOERDER_TOP = 0
-BOERDER_BOTTOM = WINDOW_HEIGHT
-BORDER_LEFT = 0
-BOERDER_RIGHT = WINDOW_WIDTH
-
-OFF_SET_X = 10
-
-THRESHOLD = 2
 
 local push = require "src.push"
 
+require "src.conf"
 require "src.Ball"
 require "src.Player"
+require "src.utility"
 
 function love.load()
   math.randomseed(os.time())
@@ -23,14 +15,19 @@ function love.load()
   smallFont = love.graphics.newFont("assets/Font/alk-life-webfont.ttf", 14)
   bounceToPlayerSound = love.audio.newSource("assets/Sound/bounceToPlayer.mp3", "stream")
   bounceToTopBottomBorderSound = love.audio.newSource("assets/Sound/bounceToTopBottomBorder.mp3", "stream")
-  --gamePlayMusic = love.audio.newSource("assets/Sound/gamePlayMusic.mp3", "stream")
+  gamePlayMusic = love.audio.newSource("assets/Sound/gamePlayMusic.mp3", "stream")
   --love.audio.play(gamePlayMusic)
 
-  player1 = Player:init(10, 0, 5, 40)
-  player2 = Player:init(WINDOW_WIDTH - 15, WINDOW_HEIGHT - 50, 5, 40)
+  player1 = Player:init(10, 0, 
+                        PLAYER_WIDTH, PLAYER_HEIGHT)
+  player2 = Player:init(WINDOW_WIDTH - 15, WINDOW_HEIGHT - 50, 
+                        PLAYER_WIDTH, PLAYER_HEIGHT)
+
+  player1.name = "Player 1"
+  player2.name = "Player 2"
 
   -- Ball initialize
-  ball = Ball:init(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 10, 10)
+  ball = Ball:init(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 5, 5)
   -- Ball movement
   -- Game state
   gameState = "start"
@@ -66,51 +63,49 @@ function love.update(dt)
   if gameState == "play" then
     if ball:collision(player1) then
       ball.dx = -ball.dx * 1.25
-      ball.x = player1.x + OFF_SET_X
 
       if ball.dy < 0 then 
         ball.dy = -math.random(100, 200)
       else
         ball.dy = math.random(100, 200)
       end
-      love.audio.play(bounceToPlayerSound)
+      bounceToPlayerSound:play()
     end
 
     if ball:collision(player2) then
       ball.dx = -ball.dx * 1.25
-      ball.x = player2.x - OFF_SET_X
 
       if ball.dy < 0 then 
         ball.dy = -math.random(100, 200)
       else
         ball.dy = math.random(100, 200)
       end
-      love.audio.play(bounceToPlayerSound)
+      bounceToPlayerSound:play()
     end
 
     -- Collide with top border
-    if ball.y <= 0 then 
+    if ball.y <= BOERDER_TOP then 
       ball.y = 0
       ball.dy = -ball.dy
       love.audio.play(bounceToTopBottomBorderSound)
     end
 
     -- Collide with bottom border
-    if ball.y >= WINDOW_HEIGHT - 10 then
-      ball.y = WINDOW_HEIGHT - 10
+    if ball.y + ball.height >= BOERDER_BOTTOM then
+      ball.y = BOERDER_BOTTOM - ball.height
       ball.dy = -ball.dy
       love.audio.play(bounceToTopBottomBorderSound)
     end
 
     -- Collide with left border
-    if ball.x <= 0 then
+    if ball.x <= BORDER_LEFT then
       player2.score = player2.score + 1
       gameState = "start"
       ball:reset()
     end
 
     -- Collide with right border
-    if ball.x >= WINDOW_WIDTH then
+    if ball.x + ball.width >= BOERDER_RIGHT + 10 then
       player1.score = player1.score + 1
       gameState = "start"
       ball:reset()
@@ -141,15 +136,21 @@ function love.draw()
 
   displayFPS()
 
-  love.graphics.printf(tostring(player1.score), 0, WINDOW_HEIGHT / 2 - 100, WINDOW_WIDTH / 2 + 200, "center")
-  love.graphics.printf(tostring(player2.score), 0, WINDOW_HEIGHT / 2 - 100, WINDOW_WIDTH / 2 + 600, "center")
+  -- Draw score at (x;y)
+  drawPlayerScore(player1.score, WINDOW_HEIGHT / 2 - 100, WINDOW_WIDTH / 2 + 200)
+  drawPlayerScore(player2.score, WINDOW_HEIGHT / 2 - 100, WINDOW_WIDTH / 2 + 600)
+
+  if gameState == "start" then
+    love.graphics.setColor(0, 1, 0, 1)
+    love.graphics.printf("Press Enter to play", 0, WINDOW_HEIGHT / 2 - 200, WINDOW_WIDTH, "center")
+    love.graphics.setColor(1, 1, 1, 1)
+  end
 
   if gameState == "end" then
     love.graphics.setColor(0, 1, 0, 1)
-    love.graphics.print("END GAME", WINDOW_WIDTH / 2 - 80, WINDOW_HEIGHT / 2 - 200)
+    drawWinner(player1, player2)
     love.graphics.setColor(1, 1, 1, 1)
   elseif gameState == "play" then
-
   end
 end
 
@@ -161,10 +162,10 @@ function love.keypressed(key)
   if key == 'space' then
     if gameState == "start" then
       gameState = "play"
---      gamePlayMusic:play()
+      --gamePlayMusic:play()
     elseif gameState == "play" then
       gameState = "start"
---      gamePlayMusic:pause()
+      --gamePlayMusic:pause()
     elseif gameState == "end" then
       player1:reset()
       player2:reset()
@@ -173,13 +174,6 @@ function love.keypressed(key)
     end
   end
 
-
 end
 
-function displayFPS()
---  love.graphics.setFont(smallFont)
-  love.graphics.setColor(0, 1, 0, 1)
-  love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
-  love.graphics.setColor(1, 1, 1, 1)
-end
 
