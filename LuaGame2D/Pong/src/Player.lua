@@ -11,6 +11,7 @@ function Player:init(x, y, width, height)
   obj.height = height
   obj.dy     = 0
   obj.score  = 0
+  obj.name = ""
 
   return obj
 end
