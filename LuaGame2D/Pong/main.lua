@@ -27,7 +27,7 @@ function love.load()
   player2.name = "Player 2"
 
   -- Ball initialize
-  ball = Ball:init(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 5, 5)
+  ball = Ball:init(WINDOW_WIDTH / 2 - 45, WINDOW_HEIGHT / 2, 100, 100)
   -- Ball movement
   -- Game state
   gameState = "start"
@@ -62,7 +62,7 @@ function love.update(dt)
 
   if gameState == "play" then
     if ball:collision(player1) then
-      ball.dx = -ball.dx * 1.25
+      ball.dx = -ball.dx * 1.1
 
       if ball.dy < 0 then 
         ball.dy = -math.random(100, 200)
@@ -73,7 +73,7 @@ function love.update(dt)
     end
 
     if ball:collision(player2) then
-      ball.dx = -ball.dx * 1.25
+      ball.dx = -ball.dx * 1.1
 
       if ball.dy < 0 then 
         ball.dy = -math.random(100, 200)
