@@ -2,7 +2,7 @@ WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 
 PLAYER_WIDTH = 5
-PLAYER_HEIGHT = 80
+PLAYER_HEIGHT = 100
 PADDLE_SPEED = 800
 
 BOERDER_TOP = 0
@@ -12,7 +12,7 @@ BOERDER_RIGHT = WINDOW_WIDTH
 
 OFF_SET_X = 10
 
-THRESHOLD = 1
+THRESHOLD = 2
 
 function love.conf(t)
   t.window.icon = "assets/Icon/pong_icon.png"
