@@ -47,4 +47,9 @@ function Ball:collision(player)
    return true;
 end
 
+function Ball:resize(w, h)
+  self.width = w
+  self.height = h
+end
+
 
