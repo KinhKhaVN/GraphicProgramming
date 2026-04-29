@@ -1,0 +1,40 @@
+Bird = {}
+local GRAVITY = 980
+
+function Bird:init()
+  local obj = {}
+  setmetatable(obj, self)
+  self.__index = self
+
+  self.image = love.graphics.newImage("assets/Image/yellowbird.png")
+  self.width = self.image:getWidth()
+  self.height = self.image:getHeight()
+
+  self.x = VIRTUAl_WIDTH / 2 - (self.width / 2)
+  self.y = VIRTUAl_HEIGHT / 2 - (self.height / 2)
+  self.dy = 0
+
+  self.action = "fly"
+
+  return obj;
+end
+
+function Bird:render()
+  love.graphics.draw(self.image, self.x, self.y)
+end
+
+function Bird:update(dt)
+  self.dy = self.dy + GRAVITY * dt
+
+  if love.keyboard.wasPressed("space") then
+    self.dy = -300
+  end
+  self.y = self.y + self.dy * dt
+end
+
+function Bird:jump(dt)
+  self.dy = self.dy + GRAVITY * dt
+  self.y = self.y - self.dy * dt
+end
+
+return Bird
