@@ -1,36 +1,66 @@
 #include "../include/Ball.h"
+#include <chrono>
+#include <cstdlib>
 #include <iostream>
 
 void Ball::Update()
 {
   Render();
   Move();
-  checkCollisionToBorder();
+  handleCollisionToBorder();
 }
 
 void Ball::Render()
 {
-  DrawCircle(x, y, r, WHITE);
+  if ( isCollisionToBorder() ) countCollide++;
+  if (countCollide > 20) countCollide = 1;
+
+  DrawCircle(x, y, r, colors[countCollide % 20]);
 }
 
 void Ball::Move()
 {
   x += dx;
   y += dy;
-  std::cout << "(" << x << "," << y << ")" << '\n';
 }
 
-void Ball::checkCollisionToBorder()
+void Ball::handleCollisionToBorder()
 {
-  if (isCollisionToTopBorder() || isCollisionToBottomBorder()) 
+  if (isCollisionToTopBorder())
   {
+    y = r;
     dy = -dy;
-  };
-  
-  if (isCollisionToLeftBorder() || isCollisionToRightBorder())
-  {
-    dx = -dx;
+    isCollided = true;
   }
+
+  if (isCollisionToBottomBorder())
+  {
+    y = HEIGHT - r;
+    dy = -dy;
+    isCollided = true;
+  }
+
+  if (isCollisionToLeftBorder())
+  {
+    x = r;
+    dx = -dx;
+    isCollided = true;
+  }
+
+  if (isCollisionToRightBorder())
+  {
+    x = WIDTH - r;
+    dx = -dx;
+    isCollided = true;
+  }
+}
+
+bool Ball::isCollisionToBorder()
+{
+  return isCollisionToTopBorder()   ||
+         isCollisionToBottomBorder()||
+         isCollisionToLeftBorder()  ||
+         isCollisionToRightBorder();
 }
 
 bool Ball::isCollisionToTopBorder()

@@ -5,12 +5,15 @@ void Rec::Update()
 {
   Render();
   Move();
-  checkCollisionToBorder();
+  handleCollisionToBorder();
 }
 
 void Rec::Render()
 {
-  DrawRectangle(x, y, width, height, WHITE);
+  if ( isCollisionToBorder() ) countCollide++;
+  if (countCollide > 20) countCollide = 1;
+
+  DrawRectangle(x, y, width, height, colors[countCollide % 20]);
 }
 
 void Rec::Move()
@@ -19,7 +22,7 @@ void Rec::Move()
   y += dy;
 }
 
-void Rec::checkCollisionToBorder()
+void Rec::handleCollisionToBorder()
 {
   if (isCollisionToTopBorder() || isCollisionToBottomBorder()) 
   {
@@ -30,6 +33,14 @@ void Rec::checkCollisionToBorder()
   {
     dx = -dx;
   }
+}
+
+bool Rec::isCollisionToBorder()
+{
+  return isCollisionToTopBorder()   ||
+         isCollisionToBottomBorder()||
+         isCollisionToLeftBorder()  ||
+         isCollisionToRightBorder();
 }
 
 bool Rec::isCollisionToTopBorder()
