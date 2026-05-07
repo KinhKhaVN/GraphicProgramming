@@ -19,13 +19,14 @@ class Rec:public Shape{
     void Update() override;
     void Render() override;
     void Move() override;
-    virtual void checkCollisionToBorder() override;
-    virtual bool isCollisionToTopBorder() override;
+    virtual void handleCollisionToBorder()   override;
+    virtual bool isCollisionToBorder()       override;
+    virtual bool isCollisionToTopBorder()    override;
     virtual bool isCollisionToBottomBorder() override;
-    virtual bool isCollisionToLeftBorder() override;
-    virtual bool isCollisionToRightBorder() override;
+    virtual bool isCollisionToLeftBorder()   override;
+    virtual bool isCollisionToRightBorder()  override;
 
-  private:
+  public:
     int width;
     int height;
 };
